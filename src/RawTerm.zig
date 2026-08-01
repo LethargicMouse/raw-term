@@ -29,10 +29,11 @@ pub fn readByte(term: *RawTerm) !u8 {
     return term.reader.interface.takeByte();
 }
 
-pub fn deinit(term: RawTerm) void {
+pub fn deinit(term: *RawTerm) void {
     std.posix.tcsetattr(std.posix.STDIN_FILENO, .FLUSH, term.termios_before) catch {
         std.log.err("failed to disable terminal raw mode", .{});
     };
+    term.* = undefined;
 }
 
 pub fn clearScreen(term: *RawTerm) !void {
