@@ -3,9 +3,9 @@ const std = @import("std");
 const RawTerm = @This();
 
 termios_before: std.posix.termios,
-read_buf: [256]u8,
+read_buf: [2048]u8,
 reader: std.Io.File.Reader,
-write_buf: [256]u8,
+write_buf: [2048]u8,
 writer: std.Io.File.Writer,
 
 pub fn init(io: std.Io) !RawTerm {
