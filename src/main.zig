@@ -6,6 +6,7 @@ pub fn main(init: std.process.Init) !void {
     var term = try RawTerm.init(init.io);
     defer term.deinit();
     try term.hideCursor();
+    try term.setColor(.green, true);
     try term.clearScreen();
     try term.flush();
     while (true) {

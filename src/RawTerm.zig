@@ -5,6 +5,30 @@ pub const Size = struct {
     height: u16,
 };
 
+pub const Color = enum {
+    black,
+    red,
+    green,
+    yellow,
+    blue,
+    purple,
+    cyan,
+    white,
+
+    fn code(color: Color) u8 {
+        switch (color) {
+            .black => return 0,
+            .red => return 1,
+            .green => return 2,
+            .yellow => return 3,
+            .blue => return 4,
+            .purple => return 5,
+            .cyan => return 6,
+            .white => return 7,
+        }
+    }
+};
+
 const RawTerm = @This();
 
 termios_before: std.posix.termios,
@@ -89,4 +113,9 @@ fn querySize() !Size {
         .width = winsize.col,
         .height = winsize.row,
     };
+}
+
+pub fn setColor(term: *RawTerm, color: Color, bold: bool) !void {
+    const bold_num = @intFromBool(bold);
+    try term.print("\x1b[{};3{}m", .{ bold_num, color.code() });
 }
