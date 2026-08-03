@@ -64,6 +64,10 @@ pub fn hideCursor(term: *RawTerm) !void {
     try term.writeAll("\x1b[?25l");
 }
 
+pub fn showCursor(term: *RawTerm) !void {
+    try term.writeAll("\x1b[?25h");
+}
+
 pub fn getSize(term: RawTerm) Size {
     return term.size;
 }
