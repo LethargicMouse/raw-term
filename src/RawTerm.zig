@@ -38,8 +38,15 @@ pub fn readByte(term: *RawTerm) !u8 {
 }
 
 pub fn deinit(term: *RawTerm) void {
+    // \r's cuz terminal raw mode fails to get attr
+    term.clearScreen() catch {
+        std.log.err("failed to clear screen\r", .{});
+    };
+    term.writer.flush() catch {
+        std.log.err("failed to flush stdout\r", .{});
+    };
     std.posix.tcsetattr(std.posix.STDIN_FILENO, .FLUSH, term.termios_before) catch {
-        std.log.err("failed to disable terminal raw mode", .{});
+        std.log.err("failed to disable terminal raw mode\r", .{});
     };
     term.* = undefined;
 }
