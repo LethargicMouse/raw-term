@@ -14,7 +14,8 @@ pub fn main(init: std.process.Init) !void {
             break;
         }
         try term.clearScreen();
-        try term.print("{}\r\n", .{input});
+        const size = term.getSize();
+        try term.print("size: {}x{}\r\ninput: {}\r\n", .{ size.width, size.height, input });
         try term.flush();
     }
 }
