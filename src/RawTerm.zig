@@ -138,3 +138,7 @@ pub fn resetColor(term: *RawTerm) !void {
 pub fn moveTo(term: *RawTerm, x: u16, y: u16) !void {
     try term.print("\x1b[{};{}H", .{ y, x });
 }
+
+pub fn writeByte(term: *RawTerm, byte: u8) !void {
+    try term.writer.interface.writeByte(byte);
+}
