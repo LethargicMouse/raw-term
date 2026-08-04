@@ -87,7 +87,7 @@ pub fn deinit(term: *RawTerm) void {
 }
 
 pub fn clearScreen(term: *RawTerm) !void {
-    try term.writeAll("\x1b[2J\x1b[H");
+    try term.writeAll("\x1b[2J");
 }
 
 pub fn flush(term: *RawTerm) !void {
