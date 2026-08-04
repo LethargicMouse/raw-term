@@ -1,29 +1,42 @@
 const std = @import("std");
 
 const RawTerm = @import("raw_term").RawTerm;
+const runApp = @import("raw_term").runApp;
 
-pub fn main(init: std.process.Init) !void {
-    var term = try RawTerm.init(init.io);
-    defer term.deinit();
-    try term.hideCursor();
-    try term.clearScreen();
-    try term.flush();
-    var minput: ?u8 = null;
-    while (true) {
-        minput = try term.readByte();
-        if (minput) |input| {
-            if (input == 'q') {
-                break;
-            }
-            try term.clearScreen();
-            const size = term.getSize();
-            try term.setColor(.green, true);
-            try term.moveTo(size.width / 2 - 7, size.height / 2);
-            try term.print("size:   {f}", .{size});
-            try term.resetColor();
-            try term.moveTo(size.width / 2 - 7, size.height / 2 + 1);
-            try term.print("input:  {any}", .{input});
-            try term.flush();
+const App = struct {
+    term: RawTerm,
+    dirty: bool = true,
+};
+
+const Echoer = struct {
+    app: *App,
+    input: u8 = 0,
+    running: bool = true,
+
+    pub fn draw(echoer: Echoer) !void {
+        const size = echoer.app.term.getSize();
+        const x = size.width / 2 - 6;
+        const y = size.height / 2;
+        try echoer.app.term.moveTo(x, y - 1);
+        try echoer.app.term.setColor(.green, true);
+        try echoer.app.term.print("size: {f}", .{size});
+        try echoer.app.term.moveTo(x, y);
+        try echoer.app.term.resetColor();
+        try echoer.app.term.print("input: {d}", .{echoer.input});
+    }
+
+    pub fn handleInput(echoer: *Echoer, input: u8) !void {
+        switch (input) {
+            'q', 27 => echoer.running = false,
+            else => echoer.input = input,
         }
     }
+};
+
+pub fn main(init: std.process.Init) !void {
+    const term = try RawTerm.init(init.io);
+    var app = App{ .term = term };
+    try app.term.hideCursor();
+    var echoer = Echoer{ .app = &app };
+    try runApp(&echoer);
 }
