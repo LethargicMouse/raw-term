@@ -119,3 +119,7 @@ pub fn setColor(term: *RawTerm, color: Color, bold: bool) !void {
     const bold_num = @intFromBool(bold);
     try term.print("\x1b[{};3{}m", .{ bold_num, color.code() });
 }
+
+pub fn resetColor(term: *RawTerm) !void {
+    try term.writeAll("\x1b[0m");
+}

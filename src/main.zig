@@ -6,7 +6,6 @@ pub fn main(init: std.process.Init) !void {
     var term = try RawTerm.init(init.io);
     defer term.deinit();
     try term.hideCursor();
-    try term.setColor(.green, true);
     try term.clearScreen();
     try term.flush();
     while (true) {
@@ -16,7 +15,10 @@ pub fn main(init: std.process.Init) !void {
         }
         try term.clearScreen();
         const size = term.getSize();
-        try term.print("size: {}x{}\r\ninput: {}\r\n", .{ size.width, size.height, input });
+        try term.setColor(.green, true);
+        try term.print("size: {}x{}", .{ size.width, size.height });
+        try term.resetColor();
+        try term.print("\r\ninput: {}", .{input});
         try term.flush();
     }
 }
