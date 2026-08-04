@@ -47,6 +47,10 @@ pub fn init(io: std.Io) !RawTerm {
     termios.lflag.ECHO = false;
     termios.lflag.ICANON = false;
     termios.oflag.OPOST = false;
+    const vtime = 5;
+    const vmin = 6;
+    termios.cc[vtime] = 0;
+    termios.cc[vmin] = 0;
     try std.posix.tcsetattr(std.posix.STDIN_FILENO, .FLUSH, termios);
 
     res.reader = std.Io.File.stdin().reader(io, &res.read_buf);
@@ -57,8 +61,11 @@ pub fn init(io: std.Io) !RawTerm {
     return res;
 }
 
-pub fn readByte(term: *RawTerm) !u8 {
-    return term.reader.interface.takeByte();
+pub fn readByte(term: *RawTerm) !?u8 {
+    return term.reader.interface.takeByte() catch |err| switch (err) {
+        error.EndOfStream => return null,
+        else => return err,
+    };
 }
 
 pub fn deinit(term: *RawTerm) void {

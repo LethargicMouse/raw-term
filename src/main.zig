@@ -8,17 +8,20 @@ pub fn main(init: std.process.Init) !void {
     try term.hideCursor();
     try term.clearScreen();
     try term.flush();
+    var minput: ?u8 = null;
     while (true) {
-        const input = try term.readByte();
-        if (input == 'q') {
-            break;
+        minput = try term.readByte();
+        if (minput) |input| {
+            if (input == 'q') {
+                break;
+            }
+            try term.clearScreen();
+            const size = term.getSize();
+            try term.setColor(.green, true);
+            try term.print("size: {}x{}", .{ size.width, size.height });
+            try term.resetColor();
+            try term.print("\r\ninput: {any}", .{input});
+            try term.flush();
         }
-        try term.clearScreen();
-        const size = term.getSize();
-        try term.setColor(.green, true);
-        try term.print("size: {}x{}", .{ size.width, size.height });
-        try term.resetColor();
-        try term.print("\r\ninput: {}", .{input});
-        try term.flush();
     }
 }
