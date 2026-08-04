@@ -3,6 +3,10 @@ const std = @import("std");
 pub const Size = struct {
     width: u16,
     height: u16,
+
+    pub fn format(size: Size, writer: *std.Io.Writer) std.Io.Writer.Error!void {
+        try writer.print("{}x{}", .{ size.width, size.height });
+    }
 };
 
 pub const Color = enum {
@@ -129,4 +133,8 @@ pub fn setColor(term: *RawTerm, color: Color, bold: bool) !void {
 
 pub fn resetColor(term: *RawTerm) !void {
     try term.writeAll("\x1b[0m");
+}
+
+pub fn moveTo(term: *RawTerm, x: u16, y: u16) !void {
+    try term.print("\x1b[{};{}H", .{ y, x });
 }

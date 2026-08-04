@@ -18,9 +18,11 @@ pub fn main(init: std.process.Init) !void {
             try term.clearScreen();
             const size = term.getSize();
             try term.setColor(.green, true);
-            try term.print("size: {}x{}", .{ size.width, size.height });
+            try term.moveTo(size.width / 2 - 7, size.height / 2);
+            try term.print("size:   {f}", .{size});
             try term.resetColor();
-            try term.print("\r\ninput: {any}", .{input});
+            try term.moveTo(size.width / 2 - 7, size.height / 2 + 1);
+            try term.print("input:  {any}", .{input});
             try term.flush();
         }
     }
