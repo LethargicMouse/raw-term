@@ -62,6 +62,13 @@ pub fn init(io: std.Io) !RawTerm {
 
     res.size = try querySize();
 
+    const act = std.posix.Sigaction{
+        .handler = .{ .handler = handleWinch },
+        .mask = std.posix.sigemptyset(),
+        .flags = 0,
+    };
+    std.posix.sigaction(.WINCH, &act, null);
+
     return res;
 }
 
@@ -110,8 +117,19 @@ pub fn showCursor(term: *RawTerm) !void {
     try term.writeAll("\x1b[?25h");
 }
 
-pub fn getSize(term: RawTerm) Size {
+pub fn getSize(term: *RawTerm) !Size {
+    if (size_changed.swap(false, .monotonic)) {
+        term.size = try querySize();
+    }
     return term.size;
+}
+
+pub fn sizeChanged(term: *RawTerm) !bool {
+    if (size_changed.swap(false, .monotonic)) {
+        term.size = try querySize();
+        return true;
+    }
+    return false;
 }
 
 fn querySize() !Size {
@@ -141,4 +159,10 @@ pub fn moveTo(term: *RawTerm, x: u16, y: u16) !void {
 
 pub fn writeByte(term: *RawTerm, byte: u8) !void {
     try term.writer.interface.writeByte(byte);
+}
+
+var size_changed = std.atomic.Value(bool).init(false);
+
+fn handleWinch(_: std.posix.SIG) callconv(.c) void {
+    size_changed.store(true, .monotonic);
 }

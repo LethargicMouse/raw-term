@@ -14,7 +14,7 @@ const Echoer = struct {
     running: bool = true,
 
     pub fn draw(echoer: Echoer) !void {
-        const size = echoer.app.term.getSize();
+        const size = try echoer.app.term.getSize();
         const x = size.width / 2 - 6;
         const y = size.height / 2;
         try echoer.app.term.moveTo(x, y - 1);

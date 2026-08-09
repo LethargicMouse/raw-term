@@ -10,13 +10,16 @@ pub fn runApp(handler: anytype) !void {
             try handler.app.term.flush();
             handler.app.dirty = false;
         }
-        if (std.meta.hasMethod(@TypeOf(handler), "update")) {
-            handler.update();
-        }
         const minput = try handler.app.term.readByte();
         if (minput) |input| {
             handler.app.dirty = true;
             try handler.handleInput(input);
+        }
+        if (std.meta.hasMethod(@TypeOf(handler), "update")) {
+            handler.update();
+        }
+        if (try handler.app.term.sizeChanged()) {
+            handler.app.dirty = true;
         }
     }
 }
