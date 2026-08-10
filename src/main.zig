@@ -36,6 +36,7 @@ const Echoer = struct {
 pub fn main(init: std.process.Init) !void {
     const term = try RawTerm.init(init.io);
     var app = App{ .term = term };
+    defer app.term.deinit();
     try app.term.hideCursor();
     var echoer = Echoer{ .app = &app };
     try runApp(&echoer);
