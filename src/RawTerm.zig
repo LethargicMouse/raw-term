@@ -53,7 +53,7 @@ pub fn init(io: std.Io) !RawTerm {
     termios.oflag.OPOST = false;
     const vtime = 5;
     const vmin = 6;
-    termios.cc[vtime] = 0;
+    termios.cc[vtime] = 1;
     termios.cc[vmin] = 0;
     try std.posix.tcsetattr(std.posix.STDIN_FILENO, .FLUSH, termios);
 
