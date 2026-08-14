@@ -16,7 +16,7 @@ pub fn runApp(handler: anytype) !void {
             try handler.handleInput(input);
         }
         if (std.meta.hasMethod(@TypeOf(handler), "update")) {
-            handler.update();
+            try handler.update();
         }
         if (try handler.app.term.sizeChanged()) {
             handler.app.dirty = true;

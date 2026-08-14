@@ -50,11 +50,10 @@ pub fn init(io: std.Io) !RawTerm {
 
     termios.lflag.ECHO = false;
     termios.lflag.ICANON = false;
+    termios.lflag.ISIG = false;
     termios.oflag.OPOST = false;
-    const vtime = 5;
-    const vmin = 6;
-    termios.cc[vtime] = 1;
-    termios.cc[vmin] = 0;
+    termios.cc[@intFromEnum(std.posix.V.TIME)] = 1;
+    termios.cc[@intFromEnum(std.posix.V.MIN)] = 0;
     try std.posix.tcsetattr(std.posix.STDIN_FILENO, .FLUSH, termios);
 
     res.reader = std.Io.File.stdin().reader(io, &res.read_buf);
