@@ -153,7 +153,7 @@ pub fn resetColor(term: *RawTerm) !void {
     try term.writeAll("\x1b[0m");
 }
 
-pub fn moveTo(term: *RawTerm, x: u16, y: u16) !void {
+pub fn moveTo(term: *RawTerm, x: u64, y: u64) !void {
     try term.print("\x1b[{};{}H", .{ y, x });
 }
 
