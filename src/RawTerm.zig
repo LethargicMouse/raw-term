@@ -1,5 +1,21 @@
 const std = @import("std");
 
+pub const Dir = enum {
+    right,
+    left,
+    up,
+    down,
+
+    fn code(dir: Dir) u8 {
+        switch (dir) {
+            .right => 'C',
+            .left => 'D',
+            .up => 'A',
+            .down => 'B',
+        }
+    }
+};
+
 pub const Size = struct {
     width: u16,
     height: u16,
@@ -151,7 +167,7 @@ pub fn setColor(term: *RawTerm, color: Color, bold: bool) !void {
     try term.print("\x1b[{d};3{d}m", .{ bold_num, color.code() });
 }
 
-pub fn goto(term: *RawTerm, x: u64, y: u64) !void {
+pub fn goto(term: *RawTerm, x: usize, y: usize) !void {
     try term.print("\x1b[{};{}H", .{ y, x });
 }
 
@@ -163,4 +179,8 @@ var size_changed = std.atomic.Value(bool).init(false);
 
 fn handleWinch(_: std.posix.SIG) callconv(.c) void {
     size_changed.store(true, .monotonic);
+}
+
+pub fn go(term: *RawTerm, dir: Dir, n: usize) !void {
+    try term.print("\x1b{d}{c}", .{ n, dir.code() });
 }
