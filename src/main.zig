@@ -17,11 +17,11 @@ const Echoer = struct {
         const size = try echoer.app.term.getSize();
         const x = size.width / 2 - 6;
         const y = size.height / 2;
-        try echoer.app.term.moveTo(x, y - 1);
+        try echoer.app.term.goto(x, y - 1);
         try echoer.app.term.setColor(.green, true);
         try echoer.app.term.print("size: {f}", .{size});
-        try echoer.app.term.moveTo(x, y);
-        try echoer.app.term.resetColor();
+        try echoer.app.term.goto(x, y);
+        try echoer.app.term.setColor(.default, true);
         try echoer.app.term.print("input: {d}", .{echoer.input});
     }
 

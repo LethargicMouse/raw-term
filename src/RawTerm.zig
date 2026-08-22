@@ -18,6 +18,7 @@ pub const Color = enum {
     purple,
     cyan,
     white,
+    default,
 
     fn code(color: Color) u8 {
         switch (color) {
@@ -29,6 +30,7 @@ pub const Color = enum {
             .purple => return 5,
             .cyan => return 6,
             .white => return 7,
+            .default => return 9,
         }
     }
 };
@@ -81,7 +83,7 @@ pub fn readByte(term: *RawTerm) !?u8 {
 fn restore(term: *RawTerm) !void {
     // \r's cuz terminal raw mode fails to get attr
     try term.clearScreen();
-    try term.moveTo(1, 1);
+    try term.goto(1, 1);
     try term.writer.flush();
     try std.posix.tcsetattr(std.posix.STDIN_FILENO, .FLUSH, term.termios_before);
 }
@@ -146,14 +148,10 @@ fn querySize() !Size {
 
 pub fn setColor(term: *RawTerm, color: Color, bold: bool) !void {
     const bold_num = @intFromBool(bold);
-    try term.print("\x1b[{};3{}m", .{ bold_num, color.code() });
+    try term.print("\x1b[{d};3{d}m", .{ bold_num, color.code() });
 }
 
-pub fn resetColor(term: *RawTerm) !void {
-    try term.writeAll("\x1b[0m");
-}
-
-pub fn moveTo(term: *RawTerm, x: u64, y: u64) !void {
+pub fn goto(term: *RawTerm, x: u64, y: u64) !void {
     try term.print("\x1b[{};{}H", .{ y, x });
 }
 
