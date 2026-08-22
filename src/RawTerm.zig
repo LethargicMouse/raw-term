@@ -182,5 +182,5 @@ fn handleWinch(_: std.posix.SIG) callconv(.c) void {
 }
 
 pub fn go(term: *RawTerm, dir: Dir, n: usize) !void {
-    try term.print("\x1b{d}{c}", .{ n, dir.code() });
+    try term.print("\x1b[{d}{c}", .{ n, dir.code() });
 }
