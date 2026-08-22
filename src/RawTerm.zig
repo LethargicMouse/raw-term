@@ -8,10 +8,10 @@ pub const Dir = enum {
 
     fn code(dir: Dir) u8 {
         switch (dir) {
-            .right => 'C',
-            .left => 'D',
-            .up => 'A',
-            .down => 'B',
+            .right => return 'C',
+            .left => return 'D',
+            .up => return 'A',
+            .down => return 'B',
         }
     }
 };
